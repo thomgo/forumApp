@@ -1,0 +1,19 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}{% endblock %}
+
+{% block body %}
+    <h2>Les derniers sujets ouverts :</h2>
+    {% for subject in subjects %}
+        <div class="card my-3">
+            <div class="card-header">
+                Publié le : {{subject.published|date('d/m/Y')}} à {{subject.published|date('H:i')}}
+            </div>
+            <div class="card-body">
+                <h5 class="card-title">{{subject.title}}</h5>
+                <p class="card-text">{{subject.content}}</p>
+                <a href="#" class="btn btn-dark text-white">Voir</a>
+            </div>
+        </div>
+    {% endfor %}
+{% endblock %}
