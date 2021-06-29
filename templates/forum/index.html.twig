@@ -1,7 +1,8 @@
+{# Toutes nos pages héritent de la page de base pour charger le template HTML minimal #}
 {% extends 'base.html.twig' %}
 
 {% block title %}{% endblock %}
-
+{# On vient écrire dans le bloc body au centre de la page #}
 {% block body %}
     <h2>Les derniers sujets ouverts :</h2>
     {% for subject in subjects %}
@@ -12,7 +13,8 @@
             <div class="card-body">
                 <h5 class="card-title">{{subject.title}}</h5>
                 <p class="card-text">{{subject.content}}</p>
-                <a href="#" class="btn btn-dark text-white">Voir</a>
+                {# Exemple de lien vers une route qui attend un paramètre #}
+                <a href="{{ path('single', {id: subject.id}) }}" class="btn btn-dark text-white">Voir</a>
             </div>
         </div>
     {% endfor %}

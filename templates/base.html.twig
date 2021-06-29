@@ -1,3 +1,4 @@
+{# Fichier de base avec l'architecture HTML minimale du fichier #}
 <!DOCTYPE html>
 <html>
     <head>
@@ -15,9 +16,11 @@
         {% endblock %}
     </head>
     <body>
+        {# Ici on vient charger les différents blocs de notre template #}
         {% include 'header.html.twig' %}
         {% include 'nav.html.twig' %}
         <main class="container my-5">
+            {# On crée un bloc dans lequel nos pages viendront écrire #}
             {% block body %}{% endblock %}
         </main>
         {% include 'footer.html.twig' %}
