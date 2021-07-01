@@ -9,7 +9,11 @@ use Symfony\Component\Routing\Annotation\Route;
 use App\Entity\Subject;
 use App\Form\SubjectType;
 use App\Repository\SubjectRepository;
+use Sensio\Bundle\FrameworkExtraBundle\Configuration\IsGranted;
 
+/**
+ * @IsGranted("IS_AUTHENTICATED_FULLY")
+ */
 class ForumController extends AbstractController
 {
     /**
