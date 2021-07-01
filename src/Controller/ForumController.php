@@ -7,7 +7,9 @@ use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\Routing\Annotation\Route;
 use App\Entity\Subject;
+use App\Entity\Answer;
 use App\Form\SubjectType;
+use App\Form\AnswerType;
 use App\Repository\SubjectRepository;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\IsGranted;
 
@@ -37,14 +39,28 @@ class ForumController extends AbstractController
      */
     // Méthode pour afficher un sujet. Elle attend un paramètre id car la route attend un paramètre
     // On précise dans la route et la méthode que ce paramètre est un integer
-    public function single(int $id=1, SubjectRepository $subjectRepository): Response
+    public function single(int $id=1, SubjectRepository $subjectRepository, Request $request): Response
     {
         // Contrairement à l'index ici le repo de l'entité à été passé directement en paramètre
         // On fait appelle à la méthode find du repo qui recherche une entité par sa clef primaire
         $subject = $subjectRepository->find($id);
 
+        $answer = new Answer();
+        $form = $this->createForm(AnswerType::class, $answer);
+
+        $form->handleRequest($request);
+        if($form->isSubmitted() && $form->isValid()) {
+            $answer->setPublished(new \DateTime());
+            $answer->setUser($this->getUser());
+            $answer->setSubject($subject);
+            $entityManager = $this->getDoctrine()->getManager();
+            $entityManager->persist($answer);
+            $entityManager->flush();
+        }
+
         return $this->render('forum/single.html.twig', [
-            "subject" => $subject
+            "subject" => $subject,
+            "form" => $form->createView()
         ]);
     }
     
@@ -70,6 +86,8 @@ class ForumController extends AbstractController
         // Si on a soumis un formulaire et que tout est OK
         if($form->isSubmitted() && $form->isValid()) {
             $subject->setPublished(new \DateTime());
+            // On associe au sujet, l'utilisateur connecté qu'on récupère via le controller
+            $subject->setUser($this->getUser());
             // On enregistre le nouveau sujet
             $entityManager = $this->getDoctrine()->getManager();
             $entityManager->persist($subject);
@@ -82,6 +100,17 @@ class ForumController extends AbstractController
 
         return $this->render('forum/newSubject.html.twig', [
             "form" => $form->createView()
+        ]);
+    }
+
+    /**
+     * @Route("/user/subjects", name="userSubjects")
+     */
+    public function userSubjects(): Response
+    {
+        $subjects = $this->getUser()->getSubjects();
+        return $this->render('forum/index.html.twig', [
+            "subjects" => $subjects
         ]);
     }
 }

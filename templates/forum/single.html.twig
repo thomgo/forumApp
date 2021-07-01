@@ -4,5 +4,34 @@
 
 {% block body %}
     <h2>{{subject.title}}</h2>
-    <p>{{subject.content}}</p>
+    <div class="card my-3">
+        <div class="card-header">
+            Publié le : {{subject.published|date('d/m/Y')}} à {{subject.published|date('H:i')}}
+            Par : {{subject.user.firstname ~ " " ~ subject.user.lastname}}
+        </div>
+        <div class="card-body">
+            <h5 class="card-title">{{subject.title}}</h5>
+            <p class="card-text">{{subject.content}}</p>
+        </div>
+    </div>
+    <hr>
+    <h3>Réponses au sujet :</h3>
+        {% if subject.answers is not empty %}
+            {% for answer in subject.answers %}
+               <div class="card my-3">
+                    <div class="card-header">
+                        Répondu le : {{answer.published|date('d/m/Y')}} à {{answer.published|date('H:i')}}
+                        Par : {{answer.user.firstname ~ " " ~ answer.user.lastname}}
+                    </div>
+                    <div class="card-body">
+                        <p class="card-text">{{answer.content}}</p>
+                    </div>
+                </div> 
+            {% endfor %}
+        {% else %}
+            <div class="alert alert-secondary">Pas encore de réponses à ce sujet</div>
+        {% endif %}
+    <hr>
+    <h3>Poster une réponse :</h3>
+    {{form(form)}}
 {% endblock %}

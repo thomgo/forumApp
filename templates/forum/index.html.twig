@@ -9,6 +9,7 @@
         <div class="card my-3">
             <div class="card-header">
                 Publié le : {{subject.published|date('d/m/Y')}} à {{subject.published|date('H:i')}}
+                Par : {{subject.user.firstname ~ " " ~ subject.user.lastname}}
             </div>
             <div class="card-body">
                 <h5 class="card-title">{{subject.title}}</h5>
