@@ -8,9 +8,12 @@ use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\Routing\Annotation\Route;
 use App\Entity\Subject;
 use App\Entity\Answer;
+use App\Entity\Comment;
 use App\Form\SubjectType;
 use App\Form\AnswerType;
+use App\Form\CommentType;
 use App\Repository\SubjectRepository;
+use App\Repository\AnswerRepository;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\IsGranted;
 
 /**
@@ -111,6 +114,32 @@ class ForumController extends AbstractController
         $subjects = $this->getUser()->getSubjects();
         return $this->render('forum/index.html.twig', [
             "subjects" => $subjects
+        ]);
+    }
+
+    /**
+     * @Route("/comment/{answerId}", name="newComment", requirements={"answerId"="\d+"})
+     */
+    public function newComment(Request $request, AnswerRepository $answerRepository, int $answerId): Response
+    {
+        $comment = new Comment();
+        $form = $this->createForm(CommentType::class, $comment);
+
+        $form->handleRequest($request);
+        if($form->isSubmitted() && $form->isValid()) {
+            $comment->setPublished(new \DateTime());
+            $comment->setUser($this->getUser());
+            $answer = $answerRepository->find($answerId);
+            $comment->setAnswer($answer);
+            $entityManager = $this->getDoctrine()->getManager();
+            $entityManager->persist($comment);
+            $entityManager->flush();
+
+            return $this->redirectToRoute('single', ["id" => $answer->getSubject()->getId()]);
+        }
+
+        return $this->render('forum/newComment.html.twig', [
+            "form" => $form->createView()
         ]);
     }
 }

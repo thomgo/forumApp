@@ -25,7 +25,11 @@
                     </div>
                     <div class="card-body">
                         <p class="card-text">{{answer.content}}</p>
+                        <a href="{{path('newComment', {answerId: answer.id})}}" class="btn btn-sm btn-secondary float-end">Commenter</a>
                     </div>
+                    {% for comment in answer.comments %}
+                        <p class="bg-light text-italic mx-2 p-1">{{comment.content}} par {{comment.user.firstname ~ " " ~ comment.user.lastname}} le : {{comment.published|date('d/m/Y')}}</p>
+                    {% endfor %}
                 </div> 
             {% endfor %}
         {% else %}
