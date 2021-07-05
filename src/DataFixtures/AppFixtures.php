@@ -47,7 +47,9 @@ class AppFixtures extends Fixture
 
         $users = $userRepository->findAll();
         $subjects = $subjectRepository->findAll();
-
+        // Cette boucle aurait pu être imbriquée dans les deux premières
+        // Mais cela permet d'associer les réponses à des utilisateurs au harsard
+        // Une autre solution aurait été de faire plusieurs fichiers de fixtures
         foreach ($subjects as $key => $subject) {
             for ($i=1; $i < 10; $i++) { 
                 $answer = new Answer();

@@ -129,12 +129,13 @@ class ForumController extends AbstractController
         if($form->isSubmitted() && $form->isValid()) {
             $comment->setPublished(new \DateTime());
             $comment->setUser($this->getUser());
+            // Il faut récupérer la réponse associée au commentaire car nous n'y avons pas accès sur cette page
             $answer = $answerRepository->find($answerId);
             $comment->setAnswer($answer);
             $entityManager = $this->getDoctrine()->getManager();
             $entityManager->persist($comment);
             $entityManager->flush();
-
+            // Pour la redirection on récupère l'id du sujet via l'entité answer
             return $this->redirectToRoute('single', ["id" => $answer->getSubject()->getId()]);
         }
 
