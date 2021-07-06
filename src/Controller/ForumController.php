@@ -12,6 +12,7 @@ use App\Entity\Comment;
 use App\Form\SubjectType;
 use App\Form\AnswerType;
 use App\Form\CommentType;
+use App\Form\RegistrationFormType;
 use App\Repository\SubjectRepository;
 use App\Repository\AnswerRepository;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\IsGranted;
@@ -22,15 +23,21 @@ use Sensio\Bundle\FrameworkExtraBundle\Configuration\IsGranted;
 class ForumController extends AbstractController
 {
     /**
-     * @Route("/forum", name="forum")
-     * @Route("/", name="index")
+     * On restreint l'accès à la seule méthode get (url), pas de formulaire possible (post)
+     * @Route("/forum", methods={"GET"}, name="forum")
+     * @Route("/", methods={"GET"}, name="index")
      */
     public function index(): Response
     {
         // On récupère le repo (le manger/model) de l'entité Subject, ce repo contient déjà des requêtes simples en BDD
         $subjectRepository = $this->getDoctrine()->getRepository(Subject::class);
-        // Sur le repo on appelle la méthode findAll qui renvoie toutes les entités (ici Subject)
-        $subjects = $subjectRepository->findAll();
+        // Sur le repo on appelle la méthode findBy qui renvoie toutes les entités (ici Subject) selon certains critères
+        // Ici on prend les 5 derniers id enregistrés
+        $subjects = $subjectRepository->findBy(
+            [],
+            ["id" => "DESC"],
+            10
+        );
         // On retourne une vue sous forme de réponse et on lui passe une variables subjects à laquelle on associe $subjects
         return $this->render('forum/index.html.twig', [
             'subjects' => $subjects,
@@ -38,7 +45,7 @@ class ForumController extends AbstractController
     }
 
     /**
-     * @Route("/forum/subject/{id}", name="single", requirements={"id"="\d+"})
+     * @Route("/forum/subject/{id}", methods={"GET", "POST"}, name="single", requirements={"id"="\d+"})
      */
     // Méthode pour afficher un sujet. Elle attend un paramètre id car la route attend un paramètre
     // On précise dans la route et la méthode que ce paramètre est un integer
@@ -68,7 +75,7 @@ class ForumController extends AbstractController
     }
     
     /**
-     * @Route("/forum/rules", name="rules")
+     * @Route("/forum/rules", methods={"GET"}, name="rules")
      */
     public function rules(): Response
     {
@@ -77,7 +84,7 @@ class ForumController extends AbstractController
     }
 
     /**
-     * @Route("/forum/subject/new", name="newSubject")
+     * @Route("/forum/subject/new", methods={"GET", "POST"}, name="newSubject")
      */
     public function newSubject(Request $request): Response
     {
@@ -107,7 +114,7 @@ class ForumController extends AbstractController
     }
 
     /**
-     * @Route("/user/subjects", name="userSubjects")
+     * @Route("/user/subjects", methods={"GET"}, name="userSubjects")
      */
     public function userSubjects(): Response
     {
@@ -118,7 +125,7 @@ class ForumController extends AbstractController
     }
 
     /**
-     * @Route("/comment/{answerId}", name="newComment", requirements={"answerId"="\d+"})
+     * @Route("/comment/{answerId}", methods={"GET", "POST"}, name="newComment", requirements={"answerId"="\d+"})
      */
     public function newComment(Request $request, AnswerRepository $answerRepository, int $answerId): Response
     {
@@ -140,6 +147,20 @@ class ForumController extends AbstractController
         }
 
         return $this->render('forum/newComment.html.twig', [
+            "form" => $form->createView()
+        ]);
+    }
+
+    /**
+     * @Route("/user/profil", methods={"GET", "POST"}, name="userProfil")
+     */
+    public function userProfil(): Response
+    {
+        // On récupère l'utilisateur connecté avec ses informations
+        $user = $this->getUser();
+        // Le formulaire sera prérempli avec les informations de l'entité
+        $form = $this->createForm(RegistrationFormType::class, $user);
+        return $this->render('forum/userProfil.html.twig', [
             "form" => $form->createView()
         ]);
     }

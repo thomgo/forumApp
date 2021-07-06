@@ -1,4 +1,10 @@
 <header class="bg-dark text-danger my-0 py-5">
+    {# On conditionne l'affiche du boutton à la présence d'un utilisateur connecté #}
+    {% if app.user %}
+        <a href="{{path('app_logout')}}" class="btn btn-danger text-white float-end me-2">Deconnexion</a>
+    {% else %}
+        <a href="{{path('app_login')}}" class="btn btn-danger text-white float-end me-2">Connexion</a>
+    {% endif %}
     <section class="container text-center">
         <h1>Les fans de tech</h1>
         <p>tout ce que vous voulez savoir sur la tech en osant le demander !</p>
