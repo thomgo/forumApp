@@ -36,6 +36,17 @@ class SubjectRepository extends ServiceEntityRepository
     }
     */
 
+    public function getSubjects() {
+        return $this->createQueryBuilder('s')
+            ->innerJoin('s.user', 'u')
+            ->addSelect('u')
+            ->orderBy('s.id', 'DESC')
+            ->setMaxResults(5)
+            ->getQuery()
+            ->getResult()
+        ;
+    }
+
     /*
     public function findOneBySomeField($value): ?Subject
     {
@@ -47,4 +58,23 @@ class SubjectRepository extends ServiceEntityRepository
         ;
     }
     */
+
+    public function getSingleSubject(int $id) {
+        return $this->createQueryBuilder('s')
+            ->innerJoin('s.user', 'u')
+            ->addSelect('u')
+            ->leftJoin('s.answers', 'a')
+            ->addSelect('a')
+            ->leftJoin('a.comments', 'c')
+            ->addSelect('c')
+            ->leftJoin('a.user', 'us')
+            ->addSelect('us')
+            ->leftJoin('c.user', 'use')
+            ->addSelect('use')
+            ->where('s.id = :id')
+            ->setParameter('id', $id)
+            ->getQuery()
+            ->getOneOrNullResult()
+        ;
+    }
 }

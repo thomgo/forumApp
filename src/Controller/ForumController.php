@@ -33,11 +33,7 @@ class ForumController extends AbstractController
         $subjectRepository = $this->getDoctrine()->getRepository(Subject::class);
         // Sur le repo on appelle la méthode findBy qui renvoie toutes les entités (ici Subject) selon certains critères
         // Ici on prend les 5 derniers id enregistrés
-        $subjects = $subjectRepository->findBy(
-            [],
-            ["id" => "DESC"],
-            10
-        );
+        $subjects = $subjectRepository->getSubjects();
         // On retourne une vue sous forme de réponse et on lui passe une variables subjects à laquelle on associe $subjects
         return $this->render('forum/index.html.twig', [
             'subjects' => $subjects,
@@ -53,7 +49,7 @@ class ForumController extends AbstractController
     {
         // Contrairement à l'index ici le repo de l'entité à été passé directement en paramètre
         // On fait appelle à la méthode find du repo qui recherche une entité par sa clef primaire
-        $subject = $subjectRepository->find($id);
+        $subject = $subjectRepository->getSingleSubject($id);
 
         $answer = new Answer();
         $form = $this->createForm(AnswerType::class, $answer);
