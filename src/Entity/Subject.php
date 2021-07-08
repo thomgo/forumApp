@@ -6,6 +6,7 @@ use App\Repository\SubjectRepository;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Mapping as ORM;
+use Symfony\Component\Validator\Constraints as Assert;
 
 /**
  * @ORM\Entity(repositoryClass=SubjectRepository::class)
@@ -21,11 +22,27 @@ class Subject
 
     /**
      * @ORM\Column(type="string", length=255)
+     * @Assert\NotBlank(
+     *      message = "Attention {{ label }} ne peut pas être vide"
+     * )
+     * @Assert\Length(
+     *      min = 20,
+     *      max = 255,
+     *      minMessage = "Votre question doit comporter au moins {{ limit }} caractères",
+     *      maxMessage = "Votre question ne doit pas comporter plus de {{ limit }} caractères"
+     * )
      */
     private $title;
 
     /**
      * @ORM\Column(type="text")
+     * @Assert\NotBlank(
+     *      message = "Attention {{ label }} ne peut pas être vide"
+     * )
+     * @Assert\Length(
+     *      min = 10,
+     *      minMessage = "Votre explication doit comporter au moins {{ limit }} caractères",
+     * )
      */
     private $content;
 

@@ -99,7 +99,11 @@ class ForumController extends AbstractController
             $entityManager->persist($subject);
             // Attention les requêtes ne sont exécutées que lors du flush donc à ne pas oublier
             $entityManager->flush();
-
+            // Ajoute un message de succès pour l'utilisateur
+            $this->addFlash(
+                "success",
+                "Votre sujet a bien été ouvert, vous n'avez plus qu'à attendre les réponses ;-)"
+            );
             return $this->redirectToRoute('index');
             
         }

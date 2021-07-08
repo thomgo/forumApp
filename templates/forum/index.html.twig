@@ -5,6 +5,15 @@
 {# On vient écrire dans le bloc body au centre de la page #}
 {% block body %}
     <h2>Les derniers sujets ouverts :</h2>
+    {# Affiche tous les messages flash en session pour l'utilisateur connecté #}
+    {% for label, messages in app.flashes %}
+        {% for message in messages %}
+            <div class="alert alert-{{ label }}">
+                {{ message }}
+            </div>
+        {% endfor %}
+    {% endfor %}
+
     {% for subject in subjects %}
         <div class="card my-3">
             <div class="card-header">
